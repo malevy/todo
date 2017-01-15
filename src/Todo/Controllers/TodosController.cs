@@ -3,12 +3,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Filters;
 using Todo.Models;
+using Todo.ViewModels;
 using Todo.ViewModels.Out;
 
 namespace Todo.Controllers
 {
     [Route("api/[controller]")]
     [AddHeader("cache-control", "no-cache")]
+    [FormatFilter]
     public class TodosController : Controller
     {
         private readonly TodoRepository _repository;
@@ -104,13 +106,13 @@ namespace Todo.Controllers
         {
             var vm = TodoVM.From(todo);
     
-            vm.Links.Add(new LinkVM("this", this.Url.Action(nameof(GetOne), new {id = todo.Id})));
+            vm.Links.Add(new LinkVM("this", this.Url.AbsoluteActionUri(nameof(GetOne), new {id = todo.Id})));
 
             vm.Actions.Add(new ActionVM()
             {
                 Name = "complete",
                 Title = "mark complete",
-                Href = this.Url.Action(nameof(Complete), new {id = todo.Id}),
+                Href = this.Url.AbsoluteActionUri(nameof(Complete), new {id = todo.Id}),
                 Method = "POST"
             });
 
@@ -118,7 +120,7 @@ namespace Todo.Controllers
             {
                 Name = "delete",
                 Title = "delete",
-                Href = this.Url.Action(nameof(Delete), new { id = todo.Id }),
+                Href = this.Url.AbsoluteActionUri(nameof(Delete), new { id = todo.Id }),
                 Method = "DELETE"
             });
 
@@ -132,7 +134,7 @@ namespace Todo.Controllers
             foreach (var pi in pages)
             {
                 vm.Links.Add(new LinkVM(pi.Direction, 
-                    this.Url.Action(nameof(GetCollection), new { skip = pi.Offset, take = pi.PageSize }))
+                    this.Url.AbsoluteActionUri(nameof(GetCollection), new { skip = pi.Offset, take = pi.PageSize }))
                     );
             }
 
@@ -140,7 +142,7 @@ namespace Todo.Controllers
             {
                 Name = "create",
                 Title = "new task",
-                Href = this.Url.Action(nameof(Create)),
+                Href = this.Url.AbsoluteActionUri(nameof(Create)),
                 Method = "POST",
                 Fields =
                 {

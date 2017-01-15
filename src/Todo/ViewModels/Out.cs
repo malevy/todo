@@ -17,11 +17,11 @@ namespace Todo.ViewModels.Out
 
     public class LinkVM
     {
-        public LinkVM(string rel, string href, string title=null)
+        public LinkVM(string rel, Uri href, string title=null)
         {
             if (string.IsNullOrWhiteSpace(rel))
                 throw new ArgumentException("links must have at least one rel attribute", nameof(rel));
-            if (string.IsNullOrWhiteSpace(href))
+            if (null == href)
                 throw new ArgumentException("links must have uri", nameof(href));
 
             this.Rel.Add(rel);
@@ -29,13 +29,13 @@ namespace Todo.ViewModels.Out
             Title = title;
         }
 
-        public LinkVM(IEnumerable<string> rels,  string href, string title)
+        public LinkVM(IEnumerable<string> rels,  Uri href, string title)
         {
             if (null == rels)
                 throw new ArgumentException("links must have at least one rel attribute", nameof(rels));
             if (Rel.All(string.IsNullOrWhiteSpace))
                 throw new ArgumentException("links must have at least one rel attribute", nameof(rels));
-            if (string.IsNullOrWhiteSpace(href))
+            if (null == href)
                 throw new ArgumentException("links must have uri", nameof(href));
 
             this.Rel.AddRange(rels.Where(r => !string.IsNullOrWhiteSpace(r)));
@@ -46,7 +46,7 @@ namespace Todo.ViewModels.Out
 
         public List<string> Rel { get; private set; } = new List<string>();
 
-        public string Href { get; set; }
+        public Uri Href { get; set; }
 
         public string Title { get; set; }
     }
@@ -87,7 +87,7 @@ namespace Todo.ViewModels.Out
         public string Name { get; set; }
         public string Title { get; set; }
         public string Method { get; set; }
-        public string Href { get; set; }
+        public Uri Href { get; set; }
         public string Accepts { get; set; }
         public List<FieldVM> Fields { get; private set; } = new List<FieldVM>();
     }

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
+using Todo.Formatters.Siren;
 using Todo.Models;
 
 namespace Todo
@@ -28,11 +30,17 @@ namespace Todo
             // our in-memory task store
             services.AddSingleton<TodoRepository>(servicesProvider => TodoRepositoryFactory.Build());
 
-            // Add framework services.
-            services
-                .AddMvc()
+//            services.AddMvc()
+//                .AddJsonOptions(jsonOptions => jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
+
+            services.AddMvcCore()
+                .AddCors()
+                .AddDataAnnotations()
+                .AddFormatterMappings()
+                .AddJsonFormatters()
                 .AddJsonOptions(jsonOptions => jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
+            services.AddSirenFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,8 +49,14 @@ namespace Todo
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseStaticFiles();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            //            app.UseStaticFiles();
             app.UseMvc();
+
         }
     }
 }
