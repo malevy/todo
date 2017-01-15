@@ -47,7 +47,8 @@ namespace Todo.ViewModels
             string controller,
             object routeValues = null)
         {
-            return new Uri(@this.AbsoluteAction(action, controller, routeValues));
+            var uri = AbsoluteAction(@this, action, controller, routeValues);
+            return new Uri(uri);
         }
 
         /// <summary>

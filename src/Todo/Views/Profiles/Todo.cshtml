@@ -6,10 +6,12 @@
     <doc format="text">the boring todo sample app</doc>
 
     <!-- data elements -->
-    <descriptor id="todo">
+    <descriptor id="todo" 
+                type="semantic">
         <doc format="text">a task to be performed</doc>
     </descriptor>
-    <descriptor id="collection">
+    <descriptor id="collection" 
+                type="samentic">
         <doc format="text">a collection of items</doc>
     </descriptor>
     <descriptor id="completedOn"
@@ -24,8 +26,37 @@
                 type="semantic">
         <doc format="text">flag indicating if the task is important</doc>
     </descriptor>
+    <descriptor id="skip"
+                type="semantic">
+        <doc format="text">when retrieving a collection, the number of items to skip before populating the collection (optional)</doc>
+    </descriptor>
+    <descriptor id="take"
+                type="semantic">
+        <doc format="text">when retrieving a collection, the number of items to populate the collection with (optional)</doc>
+    </descriptor>
 
     <!-- transitions -->
+    <descriptor id="next-link"
+                name="next"
+                type="safe">
+        <doc format="text">the next page of items</doc>
+        <descriptor href="#skip"/>
+        <descriptor href="#take" />
+    </descriptor>
+    <descriptor id="previous-link"
+                name="previous"
+                type="safe">
+        <doc format="text">the previous page of items</doc>
+        <descriptor href="#skip" />
+        <descriptor href="#take" />
+    </descriptor>
+    <descriptor id="collection-link"
+                name="collection"
+                type="safe">
+        <doc format="text">the previous page of items</doc>
+        <descriptor href="#skip" />
+        <descriptor href="#take" />
+    </descriptor>
     <descriptor id="complete-link"
                 name="complete"
                 type="idempotent">
@@ -44,6 +75,4 @@
         <descriptor href="#description"/>
         <descriptor href="#important"/>
     </descriptor>
-
-
 </alps>

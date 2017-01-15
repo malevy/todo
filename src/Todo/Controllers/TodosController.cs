@@ -10,6 +10,7 @@ namespace Todo.Controllers
 {
     [Route("api/[controller]")]
     [AddHeader("cache-control", "no-cache")]
+    [AddProfileLink("TodoProfile")]
     [FormatFilter]
     public class TodosController : Controller
     {

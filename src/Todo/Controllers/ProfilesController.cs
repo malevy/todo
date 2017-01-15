@@ -10,7 +10,7 @@ namespace Todo.Controllers
     [AddHeader("cache-control", "max-age=86400")]
     public class ProfilesController : Controller
     {
-        [HttpGet("todo")]
+        [HttpGet("todo", Name = "TodoProfile")]
         public IActionResult Todo()
         {
             var document = this.View();
