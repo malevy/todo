@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using D2L.Hypermedia.Siren;
 using Optional;
-using Optional.Linq;
 using Todo.ViewModels.Out;
 
 namespace Todo.Formatters.Siren
@@ -33,14 +32,28 @@ namespace Todo.Formatters.Siren
             return transformer.Map(x => x(vm));
         }
 
+        // this method is needed for dispatching
         private ISirenEntity FromItem(object vm)
+        {
+            return FromItem(vm, null);
+        }
+
+        private ISirenEntity FromItem(object vm, string[] additionalRels)
         {
             var todo = vm as TodoVM;
             if (null == todo)
                 throw new ArgumentException($"expected '{typeof(TodoVM)}' but received '{vm.GetType()}'", nameof(vm));
 
+            string[] rels = null;
+            if (null != additionalRels)
+            {
+                rels = new string[additionalRels.Length];
+                Array.Copy(additionalRels, rels, rels.Length);
+            }
+
             var entity = new SirenEntity(
                 @class: new []{"todo"},
+                rel: rels, 
                 properties: new
                 {
                     completedOn = todo.CompletedOn,
@@ -60,9 +73,11 @@ namespace Todo.Formatters.Siren
             if (null == collection)
                 throw new ArgumentException($"expected '{typeof(TodoCollectionVm)}' but received '{vm.GetType()}'", nameof(vm));
 
+            var itemRel = new[] {"item"};
+
             var entity = new SirenEntity(
                 @class: new[] {"collection"},
-                entities: collection.Items.Select(FromItem),
+                entities: collection.Items.Select(i => FromItem(i, itemRel)),
                 links: collection.ToSirenLinks(),
                 actions: collection.ToSirenAction()
                 );
