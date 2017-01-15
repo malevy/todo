@@ -32,7 +32,7 @@ namespace Todo.Controllers
                 .ToArray();
 
             var pages = this._repository.BuildPagingFor(skip, take);
-            pages.Add(new PagingInfo("this", skip, take));
+            pages.Add(new PagingInfo("self", skip, take));
 
             return this.Ok(this.ToVm(items, pages));
         }
@@ -106,7 +106,8 @@ namespace Todo.Controllers
         {
             var vm = TodoVM.From(todo);
     
-            vm.Links.Add(new LinkVM("this", this.Url.AbsoluteActionUri(nameof(GetOne), new {id = todo.Id})));
+            vm.Links.Add(new LinkVM("self", this.Url.AbsoluteActionUri(nameof(GetOne), new {id = todo.Id})));
+            vm.Links.Add(new LinkVM("collection",this.Url.AbsoluteActionUri(nameof(GetCollection))));
 
             vm.Actions.Add(new ActionVM()
             {

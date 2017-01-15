@@ -30,11 +30,7 @@ namespace Todo
             // our in-memory task store
             services.AddSingleton<TodoRepository>(servicesProvider => TodoRepositoryFactory.Build());
 
-            services.AddMvcCore()
-                .AddCors()
-                .AddDataAnnotations()
-                .AddFormatterMappings()
-                .AddJsonFormatters()
+            services.AddMvc()
                 .AddJsonOptions(jsonOptions => jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
             services.AddSirenFormatters();
@@ -51,7 +47,7 @@ namespace Todo
                 app.UseDeveloperExceptionPage();
             }
 
-            //            app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseMvc();
             app.UseCors(policyBuilder => policyBuilder
                 .AllowAnyHeader()
