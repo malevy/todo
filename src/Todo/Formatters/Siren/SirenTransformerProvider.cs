@@ -1,48 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using D2L.Hypermedia.Siren;
-using Optional;
 using Todo.ViewModels.Out;
 
 namespace Todo.Formatters.Siren
 {
-    public class SirenTransformerProvider
+    public class SirenTransformerProvider : TransformerProviderBase<ISirenEntity>
     {
-
-        private readonly List<Tuple<Type, Func<object, ISirenEntity>>> _transformers 
-            = new List<Tuple<Type, Func<object, ISirenEntity>>>();
-
-        public SirenTransformerProvider()
+        protected override ISirenEntity FromItem(TodoVM todo, string[] additionalRels)
         {
-
-            this._transformers.Add(Tuple.Create<Type, Func<object, ISirenEntity>>(typeof(TodoVM), FromItem));
-            this._transformers.Add(Tuple.Create<Type, Func<object, ISirenEntity>>(typeof(TodoCollectionVm), FromCollection));
-        }
-
-        public Option<ISirenEntity, string> From(object vm)
-        {
-            var transformer = this._transformers
-                .Where(t => t.Item1.IsInstanceOfType(vm))
-                .Select(t => t.Item2)
-                .FirstOrDefault()
-                .SomeNotNull($"no Siren transformer for {vm.GetType()}");
-
-            return transformer.Map(x => x(vm));
-        }
-
-        // this method is needed for dispatching
-        private ISirenEntity FromItem(object vm)
-        {
-            return FromItem(vm, null);
-        }
-
-        private ISirenEntity FromItem(object vm, string[] additionalRels)
-        {
-            var todo = vm as TodoVM;
-            if (null == todo)
-                throw new ArgumentException($"expected '{typeof(TodoVM)}' but received '{vm.GetType()}'", nameof(vm));
 
             string[] rels = null;
             if (null != additionalRels)
@@ -52,8 +19,8 @@ namespace Todo.Formatters.Siren
             }
 
             var entity = new SirenEntity(
-                @class: new []{"todo"},
-                rel: rels, 
+                @class: new[] { "todo" },
+                rel: rels,
                 properties: new
                 {
                     completedOn = todo.CompletedOn,
@@ -62,25 +29,21 @@ namespace Todo.Formatters.Siren
                 },
                 links: todo.ToSirenLinks(),
                 actions: todo.ToSirenAction()
-                );
+            );
 
-            return entity ;
+            return entity;
         }
 
-        private ISirenEntity FromCollection(object vm)
+        protected override ISirenEntity FromCollection(TodoCollectionVm collection)
         {
-            var collection = vm as TodoCollectionVm;
-            if (null == collection)
-                throw new ArgumentException($"expected '{typeof(TodoCollectionVm)}' but received '{vm.GetType()}'", nameof(vm));
-
-            var itemRel = new[] {"item"};
+            var itemRel = new[] { "item" };
 
             var entity = new SirenEntity(
-                @class: new[] {"collection"},
+                @class: new[] { "collection" },
                 entities: collection.Items.Select(i => FromItem(i, itemRel)),
                 links: collection.ToSirenLinks(),
                 actions: collection.ToSirenAction()
-                );
+            );
 
             return entity;
         }

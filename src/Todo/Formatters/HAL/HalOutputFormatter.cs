@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using D2L.Hypermedia.Siren;
+using Halcyon.HAL;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Todo.ViewModels.Out;
 
-namespace Todo.Formatters.Siren
+namespace Todo.Formatters.HAL
 {
-    internal class SirenOutputFormatter : TextOutputFormatter
+    internal class HalOutputFormatter : TextOutputFormatter
     {
-        private ILogger<SirenOutputFormatter> _outputFormatterLogger;
+        private ILogger<HalOutputFormatter> _outputFormatterLogger;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public const string MediaType = "application/vnd.siren+json";
+        public const string MediaType = "application/hal+json";
 
-        // too bad that Lazy<> won't work here
         private JsonSerializer _jsonSerializer;
         private JsonSerializer Serializer => 
             _jsonSerializer 
             ?? (_jsonSerializer = JsonSerializer.Create(_jsonSerializerSettings));
 
-        public SirenOutputFormatter(JsonSerializerSettings jsonSerializerSettings, ILogger<SirenOutputFormatter> outputFormatterLogger)
+        public HalOutputFormatter(JsonSerializerSettings jsonSerializerSettings, ILogger<HalOutputFormatter> outputFormatterLogger)
         {
             if (jsonSerializerSettings == null) throw new ArgumentNullException(nameof(jsonSerializerSettings));
             _jsonSerializerSettings = jsonSerializerSettings;
@@ -32,7 +31,6 @@ namespace Todo.Formatters.Siren
             this.SupportedEncodings.Add(Encoding.UTF8);
             this.SupportedEncodings.Add(Encoding.Unicode);
             this.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse(MediaType));
-
         }
 
         // tell the pipeline which types can be handled by this formatter
@@ -46,7 +44,7 @@ namespace Todo.Formatters.Siren
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (selectedEncoding == null) throw new ArgumentNullException(nameof(selectedEncoding));
 
-            var transformerProvider = new SirenTransformerProvider();
+            var transformerProvider = new HalTransformerProvider();
             var formattedObject = transformerProvider.From(context.Object);
 
             await formattedObject.Match(
@@ -57,16 +55,17 @@ namespace Todo.Formatters.Siren
 
         private Task HandleTransformError(string problem)
         {
-            throw new FormatException($"Unable to transform viewmodel to Siren ({problem})");
+            throw new FormatException($"Unable to transform viewmodel to HAL ({problem})");
         }
 
-        private async Task WriteObject(ISirenEntity sirenEntity, OutputFormatterWriteContext context, Encoding selectedEncoding)
+        private async Task WriteObject(HALResponse halResponse, OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             var response = context.HttpContext.Response;
+            var jsonValue = halResponse.ToJObject(this.Serializer);
             using (var writer = context.WriterFactory(response.Body, selectedEncoding))
             using (var jw = new JsonTextWriter(writer) { CloseOutput = false })
             {
-                this.Serializer.Serialize(jw, sirenEntity);
+                this.Serializer.Serialize(jw, jsonValue);
                 await writer.FlushAsync();
             }
         }

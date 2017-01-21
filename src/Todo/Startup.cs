@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
+using Todo.Formatters.HAL;
 using Todo.Formatters.Siren;
 using Todo.Models;
 
@@ -34,6 +35,7 @@ namespace Todo
                 .AddJsonOptions(jsonOptions => jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
             services.AddSirenFormatters();
+            services.AddHalFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
