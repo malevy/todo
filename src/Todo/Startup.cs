@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
-using Todo.Formatters.HAL;
-using Todo.Formatters.Siren;
+using Todo.Infrastructure.Formatters.HAL;
+using Todo.Infrastructure.Formatters.Siren;
 using Todo.Infrastructure.ProblemJson;
 using Todo.Models;
 
@@ -38,6 +41,7 @@ namespace Todo
             services.AddSirenFormatters();
             services.AddHalFormatters();
             services.AddProblemJson();
+            services.ConfigureExceptionHandlerForProblemJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +49,8 @@ namespace Todo
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseExceptionHandler();
 
             app.UseMvc();
             app.UseCors(policyBuilder => policyBuilder

@@ -2,9 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Todo.Formatters.Siren;
 
-namespace Todo.Formatters.HAL
+namespace Todo.Infrastructure.Formatters.HAL
 {
     public static class HalServiceCollectionExtensions
     {

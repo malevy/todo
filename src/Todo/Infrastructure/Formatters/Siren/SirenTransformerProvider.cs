@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using D2L.Hypermedia.Siren;
+using Todo.Formatters;
 using Todo.ViewModels.Out;
 
-namespace Todo.Formatters.Siren
+namespace Todo.Infrastructure.Formatters.Siren
 {
     public class SirenTransformerProvider : TransformerProviderBase<ISirenEntity>
     {

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using Halcyon.HAL;
-using Todo.ViewModels.Out;
 using System.Linq;
+using Halcyon.HAL;
+using Todo.Formatters;
+using Todo.ViewModels.Out;
 
-namespace Todo.Formatters.HAL
+namespace Todo.Infrastructure.Formatters.HAL
 {
     public class HalTransformerProvider : TransformerProviderBase<HALResponse>
     {

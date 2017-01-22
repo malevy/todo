@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
-namespace Todo.Formatters.Siren
+namespace Todo.Infrastructure.Formatters.Siren
 {
     /// <summary>
     /// setup object for Siren Formatters

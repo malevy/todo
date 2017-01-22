@@ -8,7 +8,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Todo.ViewModels.Out;
 
-namespace Todo.Formatters.Siren
+namespace Todo.Infrastructure.Formatters.Siren
 {
     internal class SirenOutputFormatter : TextOutputFormatter
     {

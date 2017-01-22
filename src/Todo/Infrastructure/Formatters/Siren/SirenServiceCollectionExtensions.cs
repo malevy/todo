@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Todo.Formatters.Siren
+namespace Todo.Infrastructure.Formatters.Siren
 {
     public static class SirenServiceCollectionExtensions
     {

@@ -8,7 +8,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Todo.ViewModels.Out;
 
-namespace Todo.Formatters.HAL
+namespace Todo.Infrastructure.Formatters.HAL
 {
     internal class HalOutputFormatter : TextOutputFormatter
     {
