@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Filters;
+using Todo.Infrastructure.ProblemJson;
 using Todo.Models;
 using Todo.ViewModels;
 using Todo.ViewModels.Out;
@@ -41,14 +43,19 @@ namespace Todo.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] ViewModels.In.TodoVM vmIn)
         {
-            if (!ModelState.IsValid)
-            {
-                return this.BadRequest(ModelState);
-            }
 
             if (!bool.TryParse(vmIn.Important, out bool important))
             {
-                return this.BadRequest("could not convert value 'imporant' to a boolean (true/false).");
+                ModelState.AddModelError("important", "could not convert value to a boolean (true/false).");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return this.Problem(
+                    400,
+                    new Uri("/docs/errors/bad-input", UriKind.Relative),
+                    "unable to create task",
+                    "one or more inputs failed validations", modelState: ModelState);
             }
 
             var t = this._repository.Add(vmIn.Description, important);
@@ -85,10 +92,18 @@ namespace Todo.Controllers
             var todo = this._repository.Get(id);
             if (!todo.HasValue) return NotFound(NotFoundMessage);
 
-            if (string.IsNullOrWhiteSpace(vmIn.Description)) return BadRequest("missing description");
             if (!bool.TryParse(vmIn.Important, out bool important))
             {
-                return this.BadRequest("could not convert value 'imporant' to a boolean (true/false).");
+                ModelState.AddModelError("important", "could not convert value to a boolean (true/false).");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return this.Problem(
+                    400,
+                    new Uri("/docs/errors/bad-input", UriKind.Relative),
+                    "unable to create task",
+                    "one or more inputs failed validations", modelState: ModelState);
             }
 
             todo.MatchSome(t => t.Change(vmIn.Description, important));

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
 using Todo.Formatters.HAL;
 using Todo.Formatters.Siren;
+using Todo.Infrastructure.ProblemJson;
 using Todo.Models;
 
 namespace Todo
@@ -36,6 +37,7 @@ namespace Todo
 
             services.AddSirenFormatters();
             services.AddHalFormatters();
+            services.AddProblemJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,12 +46,6 @@ namespace Todo
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseStaticFiles();
             app.UseMvc();
             app.UseCors(policyBuilder => policyBuilder
                 .AllowAnyHeader()
